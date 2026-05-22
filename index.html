@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HAINON</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+<h1>HAINON</h1>
+</div>
+
+<div class="container">
+<div class="card" onclick="show('out')">الصادر</div>
+<div class="card" onclick="show('in')">الوارد</div>
+<div class="card" onclick="show('profit')">الأرباح</div>
+<div class="card" onclick="show('loss')">الخسائر</div>
+</div>
+
+<div class="form">
+<input id="title" placeholder="اسم العملية">
+<input id="amount" placeholder="المبلغ">
+
+<select id="type">
+<option>صادر</option>
+<option>وارد</option>
+<option>أرباح</option>
+<option>خسائر</option>
+</select>
+
+<button onclick="add()">حفظ</button>
+</div>
+
+<div id="list"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
