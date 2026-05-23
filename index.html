@@ -1,1 +1,69 @@
-<!DOCTYPE html><html lang='ar' dir='rtl'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>HAINON V2</title><link rel='stylesheet' href='style.css'></head><body><div class='auth-box' id='authBox'><h2>HAINON</h2><input type='email' id='email' placeholder='البريد الإلكتروني'><input type='password' id='password' placeholder='كلمة المرور'><button id='registerBtn'>إنشاء حساب</button><button id='loginBtn'>تسجيل دخول</button></div><div class='app hidden' id='app'><aside class='sidebar'><h1>HAINON</h1><button class='nav-btn'>الرئيسية</button><button id='notificationToggle' class='nav-btn'>🔔 الإشعارات</button><button id='logoutBtn' class='nav-btn'>تسجيل خروج</button></aside><main class='main-content'><h2>لوحة التحكم</h2><button class='accordion-btn'>اختر نوع العملية</button><div class='accordion-content'><div class='operation-card' data-type='income'>وارد</div><div class='operation-card' data-type='expense'>صادر</div></div><form id='operationForm'><input type='text' id='title' placeholder='اسم العملية'><input type='number' id='amount' placeholder='المبلغ'><select id='currency'><option>USD</option><option>SYP</option></select><button type='submit'>حفظ العملية</button></form></main></div><script type='module' src='firebase.js'></script><script type='module' src='app.js'></script></body></html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HAINON V3</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="authBox" class="auth-box">
+<h1>HAINON</h1>
+<input type="email" id="email" placeholder="البريد الإلكتروني">
+<input type="password" id="password" placeholder="كلمة المرور">
+<button id="registerBtn">إنشاء حساب</button>
+<button id="loginBtn">تسجيل دخول</button>
+</div>
+
+<div id="app" class="app hidden">
+
+<aside class="sidebar">
+<h2>HAINON</h2>
+<button class="nav-btn">الرئيسية</button>
+<button class="nav-btn">التقارير</button>
+<button id="notificationToggle" class="nav-btn">🔔 الإشعارات</button>
+<button id="logoutBtn" class="nav-btn logout">تسجيل خروج</button>
+</aside>
+
+<main class="main">
+
+<div class="cards">
+<div class="card"><h3>الوارد</h3><p id="incomeCard">0</p></div>
+<div class="card"><h3>الصادر</h3><p id="expenseCard">0</p></div>
+<div class="card"><h3>الأرباح</h3><p id="profitCard">0</p></div>
+<div class="card"><h3>الصافي</h3><p id="netCard">0</p></div>
+</div>
+
+<section class="operations">
+<button class="accordion-btn">اختر نوع العملية</button>
+
+<div class="accordion-content">
+<div class="operation-card" data-type="income">وارد</div>
+<div class="operation-card" data-type="expense">صادر</div>
+<div class="operation-card" data-type="sale">بيع</div>
+<div class="operation-card" data-type="purchase">شراء</div>
+</div>
+
+<form id="operationForm">
+<input type="text" id="title" placeholder="اسم العملية">
+<input type="number" id="amount" placeholder="المبلغ">
+<select id="currency">
+<option>USD</option>
+<option>SYP</option>
+</select>
+<button type="submit">حفظ العملية</button>
+</form>
+
+<div id="operationsList"></div>
+
+</section>
+
+</main>
+</div>
+
+<script type="module" src="firebase.js"></script>
+<script type="module" src="app.js"></script>
+
+</body>
+</html>
