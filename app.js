@@ -76,7 +76,7 @@ function handleAuthAction() {
     }
 }
 
-// 4. مراقبة الجلسة وحالة المستخدم (مصحح لتفادي الشاشة السوداء)
+// 4. مراقبة الجلسة وحالة المستخدم (مصحح بالكامل بدون تداخل)
 auth.onAuthStateChanged(user => {
     const authScreen = document.getElementById('auth-screen');
     const appScreen = document.getElementById('app-screen');
@@ -84,14 +84,12 @@ auth.onAuthStateChanged(user => {
     if (user) {
         currentUser = user;
         
-        // إظهار لوحة التحكم فوراً وإخفاء شاشة الدخول لمنع الشاشة السوداء
         if (authScreen) authScreen.style.display = "none";
         if (appScreen) {
             appScreen.style.display = "block";
-            appScreen.classList.remove('hidden'); // إزالة أي إخفاء متعلق بالـ CSS
+            appScreen.classList.remove('hidden');
         }
 
-        // جلب الاسم والبيانات السحابية
         db.ref('users/' + user.uid).once('value', snapshot => {
             const userData = snapshot.val();
             if (userData && document.getElementById('sidebar-username')) {
@@ -104,16 +102,9 @@ auth.onAuthStateChanged(user => {
             }
         });
         
-        // تشغيل جلب البيانات المالية
         loadFinancialData();
 
     } else {
-        // في حال عدم تسجيل الدخول
-        if (authScreen) authScreen.style.display = "block";
-        if (appScreen) appScreen.style.display = "none";
-    }
-});
-        // في حال الخروج، يتم قفل الشاشة وإظهار واجهة الدخول فقط
         if (authScreen) authScreen.style.display = "block";
         if (appScreen) appScreen.style.display = "none";
     }
