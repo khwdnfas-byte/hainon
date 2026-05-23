@@ -2,7 +2,7 @@
 const firebaseConfig = {
     apiKey: "AIzaSyBq44Imnsa8wqenolMJ8wkK92VqYl5eAlM",
     authDomain: "hainon-app.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    databaseURL: "https://hainon-app-default-rtdb.firebaseio.com/",
     projectId: "hainon-app",
     storageBucket: "YOUR_PROJECT_ID.appspot.com",
     messagingSenderId: "YOUR_SENDER_ID",
