@@ -1,40 +1,245 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HAINON</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAINON - النظام المالي الاحترافي</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="topbar">
-<h1>HAINON</h1>
-</div>
+    <div id="auth-screen" class="auth-container">
+        <div class="auth-card">
+            <h1 class="brand-title">HAINON</h1>
+            <p class="brand-subtitle">نظام المحاسبة والأرشفة الفخم</p>
+            
+            <div id="auth-forms">
+                <div class="input-group">
+                    <input type="email" id="auth-email" placeholder="البريد الإلكتروني" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="auth-password" placeholder="كلمة المرور" required>
+                </div>
+                <div class="input-group id-group hidden" id="name-field-group">
+                    <input type="text" id="auth-username" placeholder="اسم المستخدم">
+                </div>
+                
+                <button id="btn-primary-auth" class="btn-gold" onclick="handleAuthAction()">تسجيل الدخول</button>
+                
+                <div class="auth-options">
+                    <span id="auth-toggle-text" onclick="toggleAuthMode()">ليس لديك حساب؟ سجل الآن</span>
+                    <span id="forget-password" onclick="handleForgotPassword()">نسيت كلمة المرور؟</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="container">
-<div class="card" onclick="show('out')">الصادر</div>
-<div class="card" onclick="show('in')">الوارد</div>
-<div class="card" onclick="show('profit')">الأرباح</div>
-<div class="card" onclick="show('loss')">الخسائر</div>
-</div>
+    <div id="app-screen" class="app-container hidden">
+        <header class="topbar">
+            <h1 class="app-logo">HAINON</h1>
+            <button class="menu-trigger" onclick="toggleSidebar()">☰</button>
+        </header>
 
-<div class="form">
-<input id="title" placeholder="اسم العملية">
-<input id="amount" placeholder="المبلغ">
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-avatar-container">
+                    <img id="user-avatar" src="https://via.placeholder.com/100/1a1a1a/d4af37?text=H" alt="Avatar">
+                    <label for="avatar-input" class="upload-badge">📷</label>
+                    <input type="file" id="avatar-input" accept="image/*" onchange="uploadAvatar(this)" style="display:none;">
+                </div>
+                <div class="user-info">
+                    <h3 id="sidebar-username">جاري التحميل...</h3>
+                    <p id="sidebar-uid">ID: ------</p>
+                    <button class="btn-edit-profile" onclick="triggerEditName()">تعديل الاسم ✏️</button>
+                </div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li onclick="switchSection('main')">🏠 الرئيسية</li>
+                <li onclick="switchSection('records')">📂 السجلات اليومية</li>
+                <li onclick="switchSection('customers')">👥 إدارة الزبائن</li>
+                <li onclick="switchSection('merchants')">🏬 إدارة التجار</li>
+                <li onclick="switchSection('reports')">📊 التقارير و PDF</li>
+                <li id="menu-admin-panel" class="admin-only hidden" onclick="switchSection('admin')">👑 لوحة التحكم (المسؤول)</li>
+            </ul>
+            
+            <button class="btn-logout" onclick="logoutUser()">تسجيل الخروج 🚪</button>
+        </nav>
 
-<select id="type">
-<option>صادر</option>
-<option>وارد</option>
-<option>أرباح</option>
-<option>خسائر</option>
-</select>
+        <main class="content-area">
+            
+            <section id="section-main" class="app-section">
+                <div class="cards-grid">
+                    <div class="card card-in">
+                        <h4>الواردات</h4>
+                        <p id="stat-total-in">0.00</p>
+                    </div>
+                    <div class="card card-out">
+                        <h4>الصادرات</h4>
+                        <p id="stat-total-out">0.00</p>
+                    </div>
+                    <div class="card card-profit">
+                        <h4>صافي الأرباح</h4>
+                        <p id="stat-total-profit">0.00</p>
+                    </div>
+                    <div class="card card-loss">
+                        <h4>الخسائر التشغيلية</h4>
+                        <p id="stat-total-loss">0.00</p>
+                    </div>
+                </div>
 
-<button onclick="add()">حفظ</button>
-</div>
+                <div class="form-panel">
+                    <h3>إضافة معاملة مالية جديدة</h3>
+                    <div class="form-grid">
+                        <input type="text" id="tx-title" placeholder="اسم العملية / البيان">
+                        <input type="number" id="tx-amount" placeholder="المبلغ">
+                        <select id="tx-type">
+                            <option value="in">وارد (+)</option>
+                            <option value="out">صادر (-)</option>
+                            <option value="profit">ربح مباشر</option>
+                            <option value="loss">خسارة مباشرة</option>
+                        </select>
+                        <input type="date" id="tx-custom-date" placeholder="تاريخ يدوي (اختياري)">
+                        <input type="text" id="tx-notes" placeholder="ملاحظات إضافية...">
+                    </div>
+                    <input type="hidden" id="editing-tx-id" value="">
+                    <button id="btn-save-tx" class="btn-gold" onclick="saveTransaction()">حفظ العملية 💾</button>
+                </div>
 
-<div id="list"></div>
+                <div class="table-panel">
+                    <h3>معاملات اليوم الحالي</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>البيان</th>
+                                    <th>المبلغ</th>
+                                    <th>النوع</th>
+                                    <th>توقيت النظام</th>
+                                    <th>إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="today-tx-table">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
 
-<script src="app.js"></script>
+            <section id="section-records" class="app-section hidden">
+                <h2>📂 الأرشيف والسجلات اليومية</h2>
+                <div id="folders-container" class="folders-grid">
+                    </div>
+            </section>
+
+            <section id="section-customers" class="app-section hidden">
+                <h2>👥 إدارة دليل الزبائن</h2>
+                <div class="form-panel">
+                    <div class="form-grid">
+                        <input type="text" id="cust-name" placeholder="اسم الزبون">
+                        <input type="tel" id="cust-phone" placeholder="رقم الهاتف">
+                        <input type="text" id="cust-type" placeholder="التصنيف (مثال: دائم، مؤقت)">
+                    </div>
+                    <button class="btn-gold" onclick="addCustomerOrMerchant('customers')">إضافة للزبائن ✨</button>
+                </div>
+                <div class="cards-list-grid" id="customers-list"></div>
+            </section>
+
+            <section id="section-merchants" class="app-section hidden">
+                <h2>🏬 إدارة دليل التجار</h2>
+                <div class="form-panel">
+                    <div class="form-grid">
+                        <input type="text" id="merch-name" placeholder="اسم التاجر">
+                        <input type="tel" id="merch-phone" placeholder="رقم الهاتف">
+                        <input type="text" id="merch-type" placeholder="التصنيف (جملة، مورد)">
+                    </div>
+                    <button class="btn-gold" onclick="addCustomerOrMerchant('merchants')">إضافة للتجار ✨</button>
+                </div>
+                <div class="cards-list-grid" id="merchants-list"></div>
+            </section>
+
+            <section id="section-reports" class="app-section hidden">
+                <h2>📊 الفلترة الذكية وتصدير التقارير</h2>
+                <div class="form-panel">
+                    <div class="form-grid">
+                        <label>من تاريخ:<input type="date" id="report-from"></label>
+                        <label>إلى تاريخ:<input type="date" id="report-to"></label>
+                    </div>
+                    <button class="btn-gold" onclick="generateReportData()">توليد التقرير 🔍</button>
+                    <button class="btn-pdf hidden" id="btn-export-pdf" onclick="exportToPDF()">تصدير كـ PDF فخم 📄</button>
+                </div>
+
+                <div id="pdf-print-area" class="pdf-template hidden">
+                    <div class="pdf-header">
+                        <div class="pdf-brand">
+                            <h1>HAINON</h1>
+                            <p>تقرير مالي رسمي وموثق</p>
+                        </div>
+                        <img id="pdf-user-avatar" src="" alt="User Photo">
+                    </div>
+                    <hr class="gold-divider">
+                    <div class="pdf-meta">
+                        <p><strong>اسم المحاسب:</strong> <span id="pdf-user-name">---</span></p>
+                        <p><strong>تاريخ التوليد:</strong> <span id="pdf-date-now">---</span></p>
+                        <p><strong>الفترة المحددة:</strong> من <span id="pdf-span-from"></span> إلى <span id="pdf-span-to"></span></p>
+                    </div>
+                    <div class="pdf-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>التاريخ والوقت</th>
+                                    <th>البيان</th>
+                                    <th>النوع</th>
+                                    <th>المبلغ</th>
+                                    <th>ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pdf-table-rows"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-admin" class="app-section hidden">
+                <h2>👑 لوحة التحكم الإدارية (الأدمن الأعلى)</h2>
+                <p>قائمة المستخدمين المسجلين في النظام حسب الأقدمية:</p>
+                <div class="table-panel">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>رقم التسجيل</th>
+                                    <th>الصورة الشخصية</th>
+                                    <th>اسم المستخدم</th>
+                                    <th>البريد الإلكتروني</th>
+                                    <th>مُعرف الـ ID الخاص</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-table">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="modal-edit-name" class="modal hidden">
+        <div class="modal-content">
+            <h3>تعديل اسم الحساب</h3>
+            <input type="text" id="new-username-input" placeholder="اكتب الاسم الجديد هنا">
+            <div class="modal-actions">
+                <button class="btn-gold" onclick="saveNewUsername()">حفظ</button>
+                <button class="btn-logout" onclick="closeModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
-</html> 
+              </html>
