@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HAINON</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+<h1>HAINON</h1>
+
+<button class="nav-btn">الرئيسية</button>
+<button class="nav-btn">العمليات</button>
+<button class="nav-btn">التقارير</button>
+<button class="nav-btn">الدعم الفني</button>
+<button class="nav-btn">لوحة الأدمن</button>
+
+<button id="notificationToggle" class="nav-btn">
+🔔 الإشعارات
+</button>
+
+</aside>
+
+<main class="main-content">
+
+<h2>لوحة التحكم المالية</h2>
+
+<section class="cards">
+
+<div class="card">
+<h3>الوارد</h3>
+<p id="incomeUSD">0 USD</p>
+<span id="incomeSYP">0 SYP</span>
+</div>
+
+<div class="card">
+<h3>الصادر</h3>
+<p id="expenseUSD">0 USD</p>
+<span id="expenseSYP">0 SYP</span>
+</div>
+
+<div class="card">
+<h3>الأرباح</h3>
+<p id="profitUSD">0 USD</p>
+<span id="profitSYP">0 SYP</span>
+</div>
+
+<div class="card">
+<h3>الصافي</h3>
+<p id="netUSD">0 USD</p>
+<span id="netSYP">0 SYP</span>
+</div>
+
+</section>
+
+<section class="operations">
+
+<button class="accordion-btn">
+اختر نوع العملية
+</button>
+
+<div class="accordion-content">
+
+<div class="operation-card" data-type="income">وارد</div>
+<div class="operation-card" data-type="expense">صادر</div>
+<div class="operation-card" data-type="sale">بيع</div>
+<div class="operation-card" data-type="purchase">شراء</div>
+<div class="operation-card" data-type="return">مرتجع</div>
+
+</div>
+
+<form id="operationForm">
+
+<input type="text" id="title" placeholder="اسم العملية أو المنتج" required>
+<input type="number" id="amount" placeholder="المبلغ" required>
+
+<select id="currency">
+<option value="USD">USD</option>
+<option value="SYP">SYP</option>
+</select>
+
+<button type="submit">حفظ العملية</button>
+
+</form>
+
+</section>
+
+</main>
+
+</div>
+
+<script type="module" src="firebase.js"></script>
+<script type="module" src="app.js"></script>
+
+</body>
+</html>
