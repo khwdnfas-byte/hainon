@@ -76,29 +76,43 @@ function handleAuthAction() {
     }
 }
 
-// 4. مراقبة الجلسة وحالة المستخدم (هل هو داخل النظام أم خارجه؟)
+// 4. مراقبة الجلسة وحالة المستخدم (مصحح لتفادي الشاشة السوداء)
 auth.onAuthStateChanged(user => {
     const authScreen = document.getElementById('auth-screen');
     const appScreen = document.getElementById('app-screen');
 
     if (user) {
         currentUser = user;
+        
+        // إظهار لوحة التحكم فوراً وإخفاء شاشة الدخول لمنع الشاشة السوداء
+        if (authScreen) authScreen.style.display = "none";
+        if (appScreen) {
+            appScreen.style.display = "block";
+            appScreen.classList.remove('hidden'); // إزالة أي إخفاء متعلق بالـ CSS
+        }
+
+        // جلب الاسم والبيانات السحابية
         db.ref('users/' + user.uid).once('value', snapshot => {
             const userData = snapshot.val();
-            if (userData) {
-                // عرض اسم المستخدم والمعرف الشخصي في القائمة الجانبية
+            if (userData && document.getElementById('sidebar-username')) {
                 document.getElementById('sidebar-username').innerText = userData.username;
+            } else if (document.getElementById('sidebar-username')) {
+                document.getElementById('sidebar-username').innerText = user.email.split('@')[0];
+            }
+            if (document.getElementById('sidebar-uid')) {
                 document.getElementById('sidebar-uid').innerText = "ID: " + user.uid.substring(0, 6).toUpperCase();
-                
-                // الانتقال الفوري للوحة التحكم وإخفاء شاشة الدخول
-                if (authScreen) authScreen.style.display = "none";
-                if (appScreen) appScreen.style.display = "block";
-                
-                // بدء تحميل البيانات والعمليات المالية مباشرة
-                loadFinancialData();
             }
         });
+        
+        // تشغيل جلب البيانات المالية
+        loadFinancialData();
+
     } else {
+        // في حال عدم تسجيل الدخول
+        if (authScreen) authScreen.style.display = "block";
+        if (appScreen) appScreen.style.display = "none";
+    }
+});
         // في حال الخروج، يتم قفل الشاشة وإظهار واجهة الدخول فقط
         if (authScreen) authScreen.style.display = "block";
         if (appScreen) appScreen.style.display = "none";
