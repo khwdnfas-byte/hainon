@@ -1,88 +1,61 @@
-import { db } from './firebase.js';
+import { auth, db } from './firebase.js';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-import {
-collection,
-addDoc
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+document.querySelector('.accordion-btn').onclick=()=>{
+const box=document.querySelector('.accordion-content');
+box.style.display=box.style.display==='block'?'none':'block';
+};
 
-const accordionBtn = document.querySelector('.accordion-btn');
-const accordionContent = document.querySelector('.accordion-content');
+document.getElementById('registerBtn').onclick=async()=>{
+await createUserWithEmailAndPassword(auth,email.value,password.value);
+alert('تم إنشاء الحساب');
+};
 
-accordionBtn.onclick = () => {
+document.getElementById('loginBtn').onclick=async()=>{
+await signInWithEmailAndPassword(auth,email.value,password.value);
+};
 
-if(accordionContent.style.display === 'grid'){
-accordionContent.style.display = 'none';
+document.getElementById('logoutBtn').onclick=async()=>{
+await signOut(auth);
+};
+
+onAuthStateChanged(auth,(user)=>{
+if(user){
+document.getElementById('authBox').classList.add('hidden');
+document.getElementById('app').classList.remove('hidden');
 }else{
-accordionContent.style.display = 'grid';
+document.getElementById('authBox').classList.remove('hidden');
+document.getElementById('app').classList.add('hidden');
 }
-
-};
-
-let selectedType = null;
-
-document.querySelectorAll('.operation-card').forEach(card => {
-
-card.onclick = () => {
-
-selectedType = card.dataset.type;
-
-document.querySelectorAll('.operation-card').forEach(c=>{
-c.style.border = 'none';
 });
 
-card.style.border = '2px solid #d4af37';
+let selectedType='income';
 
+document.querySelectorAll('.operation-card').forEach(card=>{
+card.onclick=()=>{
+selectedType=card.dataset.type;
 };
-
 });
 
-const form = document.getElementById('operationForm');
-
-form.addEventListener('submit', async(e)=>{
-
+document.getElementById('operationForm').addEventListener('submit',async(e)=>{
 e.preventDefault();
 
-if(!selectedType){
-alert('اختر نوع العملية أولاً');
-return;
-}
-
-const title = document.getElementById('title').value;
-const amount = Number(document.getElementById('amount').value);
-const currency = document.getElementById('currency').value;
-
 await addDoc(collection(db,'operations'),{
-title,
-amount,
-currency,
+title:title.value,
+amount:Number(amount.value),
+currency:currency.value,
 type:selectedType,
 createdAt:new Date().toISOString()
 });
 
 alert('تم حفظ العملية');
-
-form.reset();
-
 });
 
-const notificationBtn = document.getElementById('notificationToggle');
+document.getElementById('notificationToggle').onclick=async()=>{
+const permission=await Notification.requestPermission();
 
-notificationBtn.onclick = async()=>{
-
-if(!('Notification' in window)){
-alert('المتصفح لا يدعم الإشعارات');
-return;
+if(permission==='granted'){
+new Notification('تم تفعيل الإشعارات');
 }
-
-const permission = await Notification.requestPermission();
-
-if(permission === 'granted'){
-localStorage.setItem('notifications','enabled');
-notificationBtn.innerHTML='🔔 الإشعارات مفعلة';
-
-new Notification('تم تفعيل إشعارات HAINON');
-}else{
-notificationBtn.innerHTML='🔕 الإشعارات متوقفة';
-}
-
 };
