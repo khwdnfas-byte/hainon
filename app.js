@@ -1,5 +1,5 @@
 import { db } from './firebase.js';
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 async function hashPassword(password) {
     const encoder = new TextEncoder();
     const data = encoder.encode(password);
@@ -72,3 +72,21 @@ document.getElementById('add-op-btn').onclick = async () => {
         alert("حدث خطأ أثناء الاتصال بقاعدة البيانات");
     }
 };
+// جلب وعرض العمليات من Firebase تلقائياً
+const q = query(collection(db, "transactions"), orderBy("timestamp", "desc"));
+
+onSnapshot(q, (snapshot) => {
+    const tbody = document.getElementById('transactions-body');
+    tbody.innerHTML = ''; // تفريغ الجدول لتحديثه بالبيانات الجديدة
+    
+    snapshot.forEach((doc) => {
+        const data = doc.data();
+        tbody.innerHTML += `
+            <tr>
+                <td>${data.type}</td>
+                <td>${data.amount}</td>
+                <td>${data.desc || '-'}</td>
+            </tr>
+        `;
+    });
+});
