@@ -1,4 +1,5 @@
-// --- 1. نظام الحماية (تشفير الدخول) ---
+import { db } from './firebase.js';
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 async function hashPassword(password) {
     const encoder = new TextEncoder();
     const data = encoder.encode(password);
@@ -45,8 +46,8 @@ accHeader.onclick = () => {
     accContent.style.display = (accContent.style.display === 'block') ? 'none' : 'block';
 };
 
-// زر حفظ العملية
-document.getElementById('add-op-btn').onclick = () => {
+// زر حفظ العملية (النسخة المربوطة بـ Firebase)
+document.getElementById('add-op-btn').onclick = async () => {
     const type = document.getElementById('op-type').value;
     const amount = document.getElementById('op-amount').value;
     const desc = document.getElementById('op-desc').value;
@@ -56,7 +57,18 @@ document.getElementById('add-op-btn').onclick = () => {
         return;
     }
 
-    // هنا سيتم لاحقاً ربط Firebase لإرسال البيانات
-    console.log("البيانات جاهزة للإرسال:", { type, amount, desc });
-    alert("تم حفظ العملية بنجاح في سجلات HAINON");
+    try {
+        await addDoc(collection(db, "transactions"), {
+            type: type,
+            amount: parseFloat(amount),
+            desc: desc,
+            timestamp: new Date()
+        });
+        alert("تم حفظ العملية في قاعدة البيانات بنجاح!");
+        document.getElementById('op-amount').value = '';
+        document.getElementById('op-desc').value = '';
+    } catch (e) {
+        console.error("خطأ أثناء الإرسال: ", e);
+        alert("حدث خطأ أثناء الاتصال بقاعدة البيانات");
+    }
 };
