@@ -1,45 +1,62 @@
-// دالة تشفير كلمة السر (SHA-256)
+// --- 1. نظام الحماية (تشفير الدخول) ---
 async function hashPassword(password) {
     const encoder = new TextEncoder();
     const data = encoder.encode(password);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 const authScreen = document.getElementById('auth-screen');
 const appScreen = document.getElementById('app-screen');
-const enterBtn = document.getElementById('enter-btn');
-const keyInput = document.getElementById('access-key');
 
 // التحقق من الدخول
-enterBtn.onclick = async () => {
-    const userInput = keyInput.value;
-    const hashedInput = await hashPassword(userInput);
+document.getElementById('enter-btn').onclick = async () => {
+    const input = document.getElementById('access-key').value;
+    const hash = await hashPassword(input);
     
-    // حفظ البصمة في المتصفح لأول مرة (نظام الأدمن)
     if (!localStorage.getItem('admin_hash')) {
-        localStorage.setItem('admin_hash', hashedInput);
-        alert("تم تعيين مفتاح الدخول بنجاح!");
+        localStorage.setItem('admin_hash', hash);
+        alert("تم تعيين كلمة السر بنجاح!");
     }
 
-    // مطابقة البصمة
-    if (localStorage.getItem('admin_hash') === hashedInput) {
+    if (localStorage.getItem('admin_hash') === hash) {
         localStorage.setItem('is_auth', 'true');
         location.reload();
     } else {
-        alert("مفتاح خاطئ!");
+        alert("خطأ في كلمة السر");
     }
 };
 
-// حماية الشاشة
 if (localStorage.getItem('is_auth') === 'true') {
     authScreen.classList.add('hidden');
     appScreen.classList.remove('hidden');
 }
 
-// زر الخروج
 document.getElementById('logout-btn').onclick = () => {
     localStorage.removeItem('is_auth');
     location.reload();
+};
+
+// --- 2. نظام العمليات المالية (الأكورديون) ---
+const accHeader = document.querySelector('.accordion-header');
+const accContent = document.querySelector('.accordion-content');
+
+accHeader.onclick = () => {
+    accContent.style.display = (accContent.style.display === 'block') ? 'none' : 'block';
+};
+
+// زر حفظ العملية
+document.getElementById('add-op-btn').onclick = () => {
+    const type = document.getElementById('op-type').value;
+    const amount = document.getElementById('op-amount').value;
+    const desc = document.getElementById('op-desc').value;
+
+    if (!amount) {
+        alert("يرجى إدخال المبلغ!");
+        return;
+    }
+
+    // هنا سيتم لاحقاً ربط Firebase لإرسال البيانات
+    console.log("البيانات جاهزة للإرسال:", { type, amount, desc });
+    alert("تم حفظ العملية بنجاح في سجلات HAINON");
 };
