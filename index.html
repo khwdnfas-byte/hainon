@@ -36,6 +36,21 @@
 
         <main id="main-content">
             <h1>مرحباً بك في لوحة تحكم HAINON</h1>
+            <div class="accordion">
+    <button class="accordion-header">إضافة عملية مالية جديدة</button>
+    <div class="accordion-content">
+        <select id="op-type">
+            <option value="وارد">وارد</option>
+            <option value="صادر">صادر</option>
+            <option value="بيع">بيع</option>
+            <option value="شراء">شراء</option>
+            <option value="مرتجع">مرتجع</option>
+        </select>
+        <input type="number" id="op-amount" placeholder="المبلغ">
+        <input type="text" id="op-desc" placeholder="ملاحظات (اختياري)">
+        <button id="add-op-btn">حفظ العملية</button>
+    </div>
+            </div>
         </main>
     </div>
 
