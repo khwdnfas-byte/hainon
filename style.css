@@ -56,3 +56,6 @@ button:hover {
 .hidden {
     display: none;
 }
+#transactions-table { width: 100%; border-collapse: collapse; margin-top: 20px; color: #fff; }
+#transactions-table th, #transactions-table td { border: 1px solid #d4af37; padding: 10px; text-align: center; }
+#transactions-table th { background: #1a1a1a; color: #d4af37; }
