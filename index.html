@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HAINON | الدخول</title>
+    <title>HAINON | نظام الإدارة المالي</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,19 +11,32 @@
     <div id="auth-screen" class="container">
         <div class="auth-box">
             <h1>HAINON</h1>
-            <p>يرجى إدخال مفتاح الدخول للمتابعة</p>
             <input type="password" id="access-key" placeholder="كلمة السر">
             <button id="enter-btn">فتح النظام</button>
         </div>
     </div>
 
     <div id="app-screen" class="hidden">
-        <header>
-            <h1>لوحة التحكم</h1>
-            <button id="logout-btn">خروج</button>
-        </header>
-        <main>
-            </main>
+        <aside id="sidebar">
+            <div class="user-profile">
+                <div class="avatar-frame"><img src="avatar.png" alt="Profile"></div>
+                <h2 id="user-name">الأدمن</h2>
+                <p id="user-id">ID: 11110</p>
+            </div>
+            <hr class="gold-divider">
+            <nav>
+                <ul>
+                    <li>الرئيسية</li>
+                    <li>العمليات المالية</li>
+                    <li>الديون</li>
+                </ul>
+                <button id="logout-btn">خروج</button>
+            </nav>
+        </aside>
+
+        <main id="main-content">
+            <h1>مرحباً بك في لوحة تحكم HAINON</h1>
+        </main>
     </div>
 
     <script type="module" src="app.js"></script>
