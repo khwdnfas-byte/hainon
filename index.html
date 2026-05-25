@@ -3,15 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HAINON - نظام الإدارة المالية</title>
-    <link rel="stylesheet" href="style.css">
+    <title>HAINON - نظام المحاسبة والإدارة المالية</title>
+    
+    <!-- Google Fonts - خط القاهرة العربي -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 - مكتبة الأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- ملف التنسيقات الرئيسي -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- شاشة التحميل -->
+    
+    <!-- ============================================= -->
+    <!-- شاشة التحميل الأولية عند فتح التطبيق -->
+    <!-- ============================================= -->
     <div id="loading-screen" class="loading-screen">
         <div class="loader">
             <div class="loader-ring"></div>
@@ -19,51 +28,72 @@
         </div>
     </div>
 
-    <!-- رسائل التنبيه العامة -->
+    <!-- ============================================= -->
+    <!-- حاوية رسائل التنبيهات المنبثقة (Toast) -->
+    <!-- ============================================= -->
     <div id="toast-container" class="toast-container"></div>
 
-    <!-- التطبيق الرئيسي -->
+    <!-- ============================================= -->
+    <!-- التطبيق الرئيسي - يظهر بعد تسجيل الدخول -->
+    <!-- ============================================= -->
     <div id="app" class="app hidden">
-        <!-- الشريط العلوي -->
+        
+        <!-- ========== الشريط العلوي ========== -->
         <header class="topbar">
-            <button id="sidebar-toggle" class="icon-btn" aria-label="القائمة">
+            <!-- زر فتح القائمة الجانبية -->
+            <button id="sidebar-toggle" class="icon-btn" aria-label="فتح القائمة">
                 <i class="fas fa-bars"></i>
             </button>
+            
+            <!-- شعار HAINON -->
             <h1 class="logo-text">HAINON</h1>
-            <button id="header-avatar" class="avatar-btn" aria-label="الصورة الشخصية">
-                <img id="header-avatar-img" src="https://ui-avatars.com/api/?name=مستخدم&background=D4AF37&color=111&size=80&bold=true&format=svg" alt="صورة المستخدم">
-            </button>
+            
+            <!-- أيقونات اليمين -->
+            <div class="topbar-actions">
+                <!-- مؤشر حالة الاتصال (أخضر = متصل | أحمر = غير متصل) -->
+                <span id="connection-status" class="connection-status" title="حالة الاتصال">
+                    <i class="fas fa-circle"></i>
+                </span>
+                
+                <!-- الصورة الشخصية المصغرة - تضغط عليها تفتح القائمة -->
+                <button id="header-avatar" class="avatar-btn" title="الصورة الشخصية - اضغط لفتح القائمة">
+                    <img id="header-avatar-img" 
+                         src="https://ui-avatars.com/api/?name=مستخدم&background=D4AF37&color=111&size=80&bold=true&format=svg" 
+                         alt="صورة المستخدم">
+                </button>
+            </div>
         </header>
 
-        <!-- القائمة الجانبية -->
+        <!-- ========== القائمة الجانبية ========== -->
         <aside id="sidebar" class="sidebar">
+            <!-- طبقة تغطية الخلفية (للموبايل) -->
             <div class="sidebar-overlay"></div>
+            
+            <!-- محتوى القائمة -->
             <div class="sidebar-content">
-                <!-- الصورة الشخصية -->
+                
+                <!-- الصورة الشخصية بحجم كبير -->
                 <div class="sidebar-avatar">
-                    <img id="sidebar-avatar-img" src="https://ui-avatars.com/api/?name=مستخدم&background=D4AF37&color=111&size=150&bold=true&format=svg" alt="صورة المستخدم">
+                    <img id="sidebar-avatar-img" 
+                         src="https://ui-avatars.com/api/?name=مستخدم&background=D4AF37&color=111&size=150&bold=true&format=svg" 
+                         alt="صورة المستخدم">
                 </div>
+                
+                <!-- اسم المستخدم -->
                 <h2 id="sidebar-username" class="sidebar-username">مستخدم</h2>
+                
+                <!-- الرقم التسلسلي -->
                 <span id="sidebar-id" class="sidebar-id">ID: ----</span>
+                
+                <!-- الدور (Admin/User) -->
+                <span id="sidebar-role" class="sidebar-role"></span>
+                
+                <!-- فاصل ذهبي أنيق -->
                 <div class="gold-separator"></div>
                 
-                <!-- قائمة التنقل -->
-                <nav class="sidebar-nav">
-                    <button class="nav-btn active" data-page="dashboard">
-                        <i class="fas fa-chart-pie"></i> لوحة التحكم
-                    </button>
-                    <button class="nav-btn" data-page="transactions">
-                        <i class="fas fa-exchange-alt"></i> العمليات
-                    </button>
-                    <button class="nav-btn" data-page="debts">
-                        <i class="fas fa-hand-holding-usd"></i> الديون
-                    </button>
-                    <button class="nav-btn" data-page="chat">
-                        <i class="fas fa-comments"></i> المحادثة
-                    </button>
-                    <button class="nav-btn" data-page="settings">
-                        <i class="fas fa-cog"></i> الإعدادات
-                    </button>
+                <!-- قائمة التنقل - تتغير حسب نوع المستخدم -->
+                <nav id="sidebar-nav" class="sidebar-nav">
+                    <!-- يتم بناؤها ديناميكياً عبر JavaScript -->
                 </nav>
                 
                 <!-- زر تسجيل الخروج -->
@@ -73,72 +103,104 @@
             </div>
         </aside>
 
-        <!-- المحتوى الرئيسي -->
+        <!-- ========== منطقة المحتوى الرئيسية ========== -->
         <main class="main-content">
-            <!-- صفحات المحتوى -->
+            
+            <!-- 🏠 الصفحة الرئيسية - لوحة التحكم -->
             <section id="page-dashboard" class="page active">
-                <!-- لوحة التحكم -->
+                <!-- تمتلئ ديناميكياً: بطاقات الصافي، الأرباح، الخسائر، سجل العمليات -->
             </section>
+            
+            <!-- 💱 صفحة العمليات المالية -->
             <section id="page-transactions" class="page">
-                <!-- العمليات -->
+                <!-- أكورديون إدخال عملية + جدول العمليات -->
             </section>
+            
+            <!-- 📝 صفحة الديون -->
             <section id="page-debts" class="page">
-                <!-- الديون -->
+                <!-- جدول الديون المؤرشفة -->
             </section>
+            
+            <!-- 📊 صفحة التقارير -->
+            <section id="page-reports" class="page">
+                <!-- تقارير يومية، أسبوعية، شهرية -->
+            </section>
+            
+            <!-- 💬 المحادثة (للأدمن) / 🎧 خدمة العملاء (للمستخدم) -->
             <section id="page-chat" class="page">
-                <!-- المحادثة -->
+                <!-- واجهة مزدوجة: قائمة جهات اتصال + صندوق محادثة -->
             </section>
+            
+            <!-- 👥 إدارة المستخدمين (للأدمن فقط) -->
+            <section id="page-users" class="page">
+                <!-- جدول المستخدمين مع حالة الاتصال والموقع والجهاز -->
+            </section>
+            
+            <!-- ⚙️ الإعدادات -->
             <section id="page-settings" class="page">
-                <!-- الإعدادات -->
+                <!-- تعديل الملف الشخصي، الصورة، كلمة المرور -->
             </section>
+            
         </main>
 
-        <!-- الآلة الحاسبة العائمة -->
+        <!-- ========== الآلة الحاسبة العائمة ========== -->
         <div id="calculator" class="calculator hidden">
             <div class="calculator-header">
                 <span>آلة حاسبة</span>
-                <button id="calc-close" class="icon-btn-sm"><i class="fas fa-times"></i></button>
+                <button id="calc-close" class="icon-btn-sm" aria-label="إغلاق الآلة الحاسبة">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <input type="text" id="calc-display" class="calc-display" readonly>
+            <input type="text" id="calc-display" class="calc-display" value="0" readonly>
             <div class="calc-buttons">
                 <button class="calc-btn" data-key="7">7</button>
                 <button class="calc-btn" data-key="8">8</button>
                 <button class="calc-btn" data-key="9">9</button>
                 <button class="calc-btn calc-op" data-key="/">÷</button>
+                
                 <button class="calc-btn" data-key="4">4</button>
                 <button class="calc-btn" data-key="5">5</button>
                 <button class="calc-btn" data-key="6">6</button>
                 <button class="calc-btn calc-op" data-key="*">×</button>
+                
                 <button class="calc-btn" data-key="1">1</button>
                 <button class="calc-btn" data-key="2">2</button>
                 <button class="calc-btn" data-key="3">3</button>
                 <button class="calc-btn calc-op" data-key="-">-</button>
+                
                 <button class="calc-btn" data-key="0">0</button>
                 <button class="calc-btn" data-key=".">.</button>
                 <button class="calc-btn calc-equal" data-key="=">=</button>
                 <button class="calc-btn calc-op" data-key="+">+</button>
-                <button class="calc-btn calc-clear" data-key="clear">C</button>
+                
+                <button class="calc-btn calc-clear" data-key="clear" style="grid-column: span 4;">C مسح الكل</button>
             </div>
         </div>
+        
+        <!-- زر فتح/إغلاق الآلة الحاسبة -->
         <button id="calc-toggle" class="calc-toggle-btn" title="آلة حاسبة">
             <i class="fas fa-calculator"></i>
         </button>
     </div>
 
-    <!-- صفحة تسجيل الدخول / التسجيل -->
+    <!-- ============================================= -->
+    <!-- صفحة المصادقة (تسجيل الدخول / إنشاء حساب) -->
+    <!-- ============================================= -->
     <div id="auth-screen" class="auth-screen">
         <div class="auth-container">
-            <div class="auth-logo">HAINON</div>
-            <p class="auth-subtitle">نظام الإدارة المالية السحابي</p>
             
-            <!-- تبويبات -->
+            <!-- شعار HAINON -->
+            <div class="auth-logo">HAINON</div>
+            <p class="auth-subtitle">نظام المحاسبة والإدارة المالية</p>
+            
+            <!-- تبويبات تسجيل الدخول وإنشاء الحساب -->
             <div class="auth-tabs">
                 <button id="tab-login" class="auth-tab active">تسجيل الدخول</button>
                 <button id="tab-register" class="auth-tab">إنشاء حساب</button>
             </div>
 
             <!-- نموذج تسجيل الدخول -->
-            <form id="login-form" class="auth-form active">
+            <form id="login-form" class="auth-form active" autocomplete="off">
                 <div class="input-group">
                     <label for="login-email">البريد الإلكتروني</label>
                     <input type="email" id="login-email" placeholder="example@mail.com" required>
@@ -147,14 +209,16 @@
                     <label for="login-password">كلمة المرور</label>
                     <input type="password" id="login-password" placeholder="كلمة المرور" required>
                 </div>
-                <button type="submit" class="auth-btn gold-btn">دخول</button>
+                <button type="submit" class="auth-btn gold-btn">🔐 دخول</button>
+                <!-- رابط نسيت كلمة المرور -->
+                <button type="button" id="forgot-password-btn" class="text-btn">نسيت كلمة المرور؟</button>
             </form>
 
-            <!-- نموذج التسجيل -->
-            <form id="register-form" class="auth-form">
+            <!-- نموذج إنشاء حساب جديد -->
+            <form id="register-form" class="auth-form" autocomplete="off">
                 <div class="input-group">
                     <label for="register-name">الاسم الكامل</label>
-                    <input type="text" id="register-name" placeholder="أدخل اسمك" required>
+                    <input type="text" id="register-name" placeholder="أدخل اسمك الكامل" required>
                 </div>
                 <div class="input-group">
                     <label for="register-email">البريد الإلكتروني</label>
@@ -162,41 +226,103 @@
                 </div>
                 <div class="input-group">
                     <label for="register-password">كلمة المرور</label>
-                    <input type="password" id="register-password" placeholder="خليط من أحرف وأرقام (6 خانات على الأقل)" required>
+                    <input type="password" id="register-password" placeholder="حرف إنجليزي + أرقام (6 خانات)" required>
                     <small class="input-hint">يجب أن تحتوي على حرف إنجليزي واحد على الأقل + أرقام (6 خانات كحد أدنى)</small>
                 </div>
-                <button type="submit" class="auth-btn gold-btn">إنشاء الحساب</button>
+                <button type="submit" class="auth-btn gold-btn">✨ إنشاء الحساب</button>
             </form>
+            
         </div>
     </div>
 
-    <!-- صفحة إعداد الصورة الشخصية (Onboarding) -->
+    <!-- ============================================= -->
+    <!-- صفحة الإعداد الأولي - رفع الصورة الشخصية -->
+    <!-- ============================================= -->
     <div id="onboarding-screen" class="onboarding-screen hidden">
         <div class="onboarding-container">
             <h2>إعداد الصورة الشخصية</h2>
-            <p>اختر صورة لحسابك أو تخطَّ هذه الخطوة</p>
+            <p>اختر صورة جميلة لحسابك أو تخطَّ هذه الخطوة</p>
+            
+            <!-- معاينة الصورة -->
             <div class="onboarding-avatar">
-                <img id="onboarding-avatar-img" src="https://ui-avatars.com/api/?name=مستخدم&background=D4AF37&color=111&size=200&bold=true&format=svg" alt="الصورة الشخصية">
+                <img id="onboarding-avatar-img" 
+                     src="https://ui-avatars.com/api/?name=مستخدم&background=D4AF37&color=111&size=200&bold=true&format=svg" 
+                     alt="معاينة الصورة">
             </div>
+            
+            <!-- رفع الصورة (مخفي) -->
             <input type="file" id="avatar-upload" accept="image/*" hidden>
-            <button id="upload-avatar-btn" class="gold-btn-outline">رفع صورة</button>
+            
+            <!-- أزرار التحكم -->
+            <button id="upload-avatar-btn" class="gold-btn-outline">📷 رفع صورة</button>
+            <button id="save-onboarding-btn" class="gold-btn" style="display:none;">💾 حفظ الصورة</button>
             <button id="skip-onboarding" class="text-btn">تخطي الإجراء</button>
         </div>
     </div>
 
-    <!-- مودال تأكيد الحذف -->
+    <!-- ============================================= -->
+    <!-- صفحة تأكيد البريد الإلكتروني -->
+    <!-- ============================================= -->
+    <div id="verify-email-screen" class="verify-screen hidden">
+        <div class="verify-container">
+            <div class="verify-icon">📧</div>
+            <h2>تأكيد البريد الإلكتروني</h2>
+            <p>تم إرسال رابط تأكيد إلى بريدك الإلكتروني</p>
+            <p class="verify-note">يرجى التحقق من بريدك الإلكتروني (بما في ذلك مجلد السبام)</p>
+            <button id="resend-verify-btn" class="gold-btn-outline">🔄 إعادة إرسال الرابط</button>
+            <button id="skip-verify-btn" class="text-btn">تخطي الآن (سيُطلب منك لاحقاً)</button>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- مودال تأكيد الإجراءات (حذف، تسجيل خروج...) -->
+    <!-- ============================================= -->
     <div id="confirm-modal" class="modal hidden">
         <div class="modal-content">
             <p id="confirm-message">هل أنت متأكد؟</p>
             <div class="modal-buttons">
-                <button id="confirm-yes" class="btn-danger">نعم</button>
+                <button id="confirm-yes" class="btn-danger">نعم، تأكيد</button>
                 <button id="confirm-no" class="btn-outline">إلغاء</button>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
+    <!-- ============================================= -->
+    <!-- مودال استعادة كلمة المرور -->
+    <!-- ============================================= -->
+    <div id="forgot-password-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>🔑 استعادة كلمة المرور</h3>
+            <p style="margin:12px 0;font-size:14px;color:var(--text-secondary);">أدخل بريدك الإلكتروني المسجل وسنرسل لك رابط استعادة كلمة المرور</p>
+            <input type="email" id="forgot-email" placeholder="example@mail.com" style="width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-tertiary);color:var(--text-primary);margin-bottom:16px;font-size:14px;">
+            <div class="modal-buttons">
+                <button id="forgot-send" class="btn-primary">📩 إرسال الرابط</button>
+                <button id="forgot-cancel" class="btn-outline">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- مودال تعديل الرقم التسلسلي ID (للأدمن فقط) -->
+    <!-- ============================================= -->
+    <div id="edit-id-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>🆔 تعديل الرقم التسلسلي</h3>
+            <p style="margin:12px 0;font-size:14px;color:var(--text-secondary);">أدخل الرقم التسلسلي الجديد للمستخدم</p>
+            <input type="text" id="edit-id-input" placeholder="الرقم التسلسلي الجديد" style="width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-tertiary);color:var(--text-primary);margin-bottom:16px;font-size:14px;">
+            <input type="hidden" id="edit-id-user-uid">
+            <div class="modal-buttons">
+                <button id="edit-id-save" class="btn-primary">💾 حفظ</button>
+                <button id="edit-id-cancel" class="btn-outline">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- تحميل ملفات JavaScript -->
+    <!-- ============================================= -->
     <script type="module" src="firebase.js"></script>
     <script type="module" src="app.js"></script>
+    
 </body>
-  </html>
+    </html>
