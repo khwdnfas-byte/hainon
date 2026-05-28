@@ -6,7 +6,7 @@
 // ---------- إعدادات EmailJS ----------
 const EMAILJS_PUBLIC_KEY = "ILfMM-EFqQXbiBmeZ";
 const EMAILJS_SERVICE_ID = "service_91tlpl2";
-const EMAILJS_TEMPLATE_ID = "wzszz2h";
+const EMAILJS_TEMPLATE_ID = "template_f7rs16k";
 
 // ---------- استيراد Firebase ----------
 import { auth, db, rtdb } from './firebase.js';
