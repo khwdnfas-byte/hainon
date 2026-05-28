@@ -332,7 +332,8 @@ async function loadUserData() {
         }
         return false;
     } catch { return false; }
-}// =============================================
+}
+// =============================================
 // نظام المصادقة
 // =============================================
 
@@ -395,12 +396,15 @@ async function handleRegister(e) {
         showVerifyEmailScreen();
         
     } catch (error) {
-        hideLoading();
-        let msg = 'حدث خطأ في إنشاء الحساب';
-        if (error.code === 'auth/email-already-in-use') msg = 'البريد الإلكتروني مستخدم مسبقاً';
-        if (error.code === 'auth/invalid-email') msg = 'صيغة البريد غير صحيحة';
-        showToast(msg, 'error');
-    }
+    hideLoading();
+    console.error('خطأ التسجيل:', error);
+    // إظهار الخطأ الحقيقي للمستخدم
+    let msg = '❌ ' + (error.message || error.code || 'خطأ غير معروف');
+    if (error.code === 'auth/email-already-in-use') msg = '❌ البريد الإلكتروني مستخدم مسبقاً';
+    else if (error.code === 'auth/invalid-email') msg = '❌ صيغة البريد غير صحيحة';
+    else if (error.code === 'auth/weak-password') msg = '❌ كلمة المرور ضعيفة جداً';
+    else if (error.code === 'auth/network-request-failed') msg = '❌ فشل الاتصال بالإنترنت';
+    showToast(msg, 'error');
 }
 
 // ---------- تأكيد البريد الإلكتروني ----------
@@ -584,7 +588,8 @@ async function completeOnboarding(avatarUrl = null) {
     } catch (error) {
         showToast('❌ حدث خطأ في حفظ البيانات', 'error');
     }
-    }// =============================================
+    }
+// =============================================
 // الصفحة الرئيسية - Dashboard
 // =============================================
 
