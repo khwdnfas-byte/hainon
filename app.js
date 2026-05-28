@@ -144,11 +144,19 @@ function getDeviceInfo() {
 
 // ---------- إرسال رمز التحقق عبر EmailJS ----------
 async function sendEmailCode(email, code) {
+    // انتظر حتى يتم تحميل EmailJS
+    let attempts = 0;
+    while (typeof emailjs === 'undefined' && attempts < 50) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+    }
+    
     if (typeof emailjs === 'undefined') {
-        console.error('❌ EmailJS غير محمل');
-        showToast('❌ فشل تحميل خدمة البريد. حاول لاحقاً.', 'error');
+        console.error('❌ EmailJS غير محمل بعد 5 ثوان');
+        showToast('❌ خدمة البريد غير جاهزة. حاول لاحقاً.', 'error');
         return false;
     }
+    
     try {
         const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
             to_email: email,
@@ -159,7 +167,15 @@ async function sendEmailCode(email, code) {
         return true;
     } catch (error) {
         console.error('❌ فشل إرسال البريد:', error);
-        showToast('❌ فشل إرسال البريد. حاول مرة أخرى.', 'error');
+        let errorMsg = 'فشل إرسال البريد. ';
+        if (error.text) {
+            errorMsg += error.text;
+        } else if (error.message) {
+            errorMsg += error.message;
+        } else {
+            errorMsg += 'تأكد من اتصالك بالإنترنت.';
+        }
+        showToast('❌ ' + errorMsg, 'error');
         return false;
     }
 }
