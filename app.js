@@ -144,6 +144,12 @@ function getDeviceInfo() {
 
 // ---------- إرسال رمز التحقق عبر EmailJS ----------
 async function sendEmailCode(email, code) {
+    if (!email || typeof email !== 'string' || email.trim() === '') {
+        console.error('❌ البريد الإلكتروني فارغ');
+        showToast('❌ الرجاء إدخال بريد إلكتروني صحيح', 'error');
+        return false;
+    }
+    
     let attempts = 0;
     while (typeof emailjs === 'undefined' && attempts < 50) {
         await new Promise(resolve => setTimeout(resolve, 100));
