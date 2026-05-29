@@ -249,20 +249,20 @@ function buildSidebar() {
     };
     
     if (!isVip && !isAdmin && !isMod && !isSuperMod) {
-        addBtn('activate-vip', 'fa-star', '⭐ تفعيل VIP');
+        addBtn('activate-vip', 'fa-star', 'VIP ✨ تفعيل');
     }
     
-    addBtn('dashboard', 'fa-chart-pie', '🏠 الرئيسية');
-    addBtn('reports', 'fa-file-invoice', '📊 التقارير');
-    addBtn('debts', 'fa-hand-holding-usd', '📝 الديون');
+    addBtn('dashboard', 'fa-chart-pie', ' الرئيسية');
+    addBtn('reports', 'fa-file-invoice', ' التقارير');
+    addBtn('debts', 'fa-hand-holding-usd', ' الديون');
     addBtn('transactions', 'fa-exchange-alt', '💱 العمليات');
     
     if (isAdmin || isMod || isSuperMod) {
         addBtn('users', 'fa-users', '👥 إدارة المستخدمين');
     }
     
-    addBtn('settings', 'fa-cog', '⚙️ الإعدادات');
-    addBtn('privacy', 'fa-shield-alt', '📜 سياسة الخصوصية');
+    addBtn('settings', 'fa-cog', ' الإعدادات');
+    addBtn('privacy', 'fa-shield-alt', ' سياسة الخصوصية');
     
     if (isAdmin || isMod || isSuperMod) {
         addBtn('chat', 'fa-comments', '💭 مشاكل المستخدمين');
@@ -289,11 +289,11 @@ function updateUI() {
     $('#sidebar-id').className = `sidebar-id ${vipLevel > 0 ? 'vip-id-vip'+vipLevel : ''}`;
     $('#sidebar-bio').textContent = userData.bio || '';
     
-    let roleText = '👤 مستخدم';
-    if (isAdmin) roleText = '👑 مدير';
-    else if (isSuperMod) roleText = '🛡️ مشرف مميز';
-    else if (isMod) roleText = '🛡️ مشرف';
-    else if (vipLevel > 0) roleText = `⭐ VIP ${vipLevel}`;
+    let roleText = '🪪 مستخدم';
+    if (isAdmin) roleText = '🎫 مدير';
+    else if (isSuperMod) roleText = '🪄 مشرف مميز';
+    else if (isMod) roleText = '🪄 مشرف';
+    else if (vipLevel > 0) roleText = ` VIP ✨'${vipLevel}`;
     $('#sidebar-role').textContent = roleText;
     
     const avatarContainer = $('#sidebar-avatar-container');
@@ -355,7 +355,7 @@ async function handleRegister(e) {
         // أول مستخدم = Admin
         const usersSnapshot = await getDocs(collection(db, 'users'));
         const isFirstUser = usersSnapshot.empty;
-        const serialId = isFirstUser ? '11110' : generateSerialId();
+        const serialId = isFirstUser ? '10' : generateSerialId();
 
         const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=D4AF37&color=111&size=200&bold=true&format=svg`;
 
@@ -438,14 +438,24 @@ async function verifyEmailCode() {
 
 // ---------- إعادة إرسال رمز التأكيد ----------
 async function resendVerificationCode() {
-    if (!currentUser) return;
+    if (!currentUser) {
+        showToast('❌ يرجى تسجيل الدخول أولاً', 'error');
+        return;
+    }
+    
     const email = currentUser.email;
+    if (!email || email.trim() === '') {
+        showToast('❌ البريد الإلكتروني غير متوفر. سجل الدخول مرة أخرى.', 'error');
+        return;
+    }
+    
     const code = generateCode();
     pendingCodes[email] = { code, expires: Date.now() + 10 * 60 * 1000 };
     const sent = await sendEmailCode(email, code);
     if (sent) {
         showToast('✅ تم إعادة إرسال الرمز', 'success');
     }
+}
 }
 
 // ---------- تسجيل الدخول ----------
@@ -513,6 +523,9 @@ async function handleResetPassword() {
     const newPass = $('#reset-new-password').value;
     const confirmPass = $('#reset-confirm-password').value;
     
+    if (!email || email.trim() === '') {
+        return showToast('❌ البريد الإلكتروني غير متوفر. حاول مرة أخرى.', 'error');
+    }
     if (!enteredCode) return showToast('أدخل رمز التحقق', 'error');
     if (!newPass || !confirmPass) return showToast('أدخل كلمة المرور الجديدة', 'error');
     if (newPass !== confirmPass) return showToast('كلمتا المرور غير متطابقتين', 'error');
@@ -526,22 +539,17 @@ async function handleResetPassword() {
         return showToast('الرمز غير صحيح', 'error');
     }
     
-    // الرمز صحيح
     delete pendingCodes[email];
-    
-    // إنشاء كلمة مرور مؤقتة وإرسالها
     const tempPass = 'Hainon' + Math.random().toString(36).slice(-6) + '!';
     
     try {
         const sent = await sendEmailCode(email, `كلمة المرور المؤقتة: ${tempPass}\nاستخدمها لتسجيل الدخول ثم قم بتغيير كلمة مرورك فوراً.`);
-        
         if (sent) {
-            showToast('✅ تم التحقق. تم إرسال كلمة مرور مؤقتة إلى بريدك. استخدمها لتسجيل الدخول ثم غير كلمة مرورك.', 'success');
+            showToast('✅ تم التحقق. تم إرسال كلمة مرور مؤقتة إلى بريدك.', 'success');
         } else {
             showToast('⚠️ تم التحقق لكن فشل إرسال كلمة المرور المؤقتة. حاول مرة أخرى.', 'error');
         }
         $('#reset-password-modal').classList.add('hidden');
-        
     } catch (error) {
         showToast('❌ فشل في إرسال كلمة المرور المؤقتة', 'error');
     }
