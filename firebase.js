@@ -8,19 +8,21 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+// ---------- مفاتيح مشروع HAINON الجديد ----------
 const firebaseConfig = {
-  apiKey: "AIzaSyB5VEhL-h84y4vzGuQRTTZra93DWLTyap4",
-  authDomain: "hainon-7c27d.firebaseapp.com",
-  databaseURL: "https://hainon-7c27d-default-rtdb.firebaseio.com",
-  projectId: "hainon-7c27d",
-  storageBucket: "hainon-7c27d.firebasestorage.app",
-  messagingSenderId: "240531479138",
-  appId: "1:240531479138:web:7e7a7d2788440728fd0f3b",
-  measurementId: "G-RYFVGRCYWP"
+  apiKey: "AIzaSyB8qhLL9i-HXre2DpbJymf69GXAhs-J0cA",
+  authDomain: "hainon-app-266f1.firebaseapp.com",
+  projectId: "hainon-app-266f1",
+  storageBucket: "hainon-app-266f1.firebasestorage.app",
+  messagingSenderId: "154652777949",
+  appId: "1:154652777949:web:2c716489ad05bae12faa34",
+  measurementId: "G-CJS2Y1MX84"
 };
 
+// تهيئة التطبيق
 const app = initializeApp(firebaseConfig);
 
+// تصدير الخدمات المطلوبة
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const rtdb = getDatabase(app);
