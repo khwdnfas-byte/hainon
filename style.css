@@ -1,9 +1,10 @@
 /* =============================================
    HAINON - نظام المحاسبة والإدارة المالية
    Dark & Light Mode | RTL | Arabic
+   الألوان: أسود، ذهبي، أخضر، أحمر
    ============================================= */
 
-/* ---------- متغيرات CSS ---------- */
+/* ---------- متغيرات CSS (الوضع الداكن - الافتراضي) ---------- */
 :root {
     --bg-primary: #0a0a0a;
     --bg-secondary: #111111;
@@ -51,14 +52,42 @@ html.light-mode {
     --vip-glow: 0 0 12px rgba(212, 175, 55, 0.5);
 }
 
-html.light-mode .gold-btn-outline { border-color: var(--gold); color: var(--gold); }
-html.light-mode .gold-btn-outline:hover { background: var(--gold); color: #000; }
-html.light-mode .nav-btn.active { background: rgba(212, 175, 55, 0.15); }
-html.light-mode table th { background: var(--bg-tertiary); color: var(--text-secondary); }
-html.light-mode .stat-card { box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-html.light-mode .chat-msg.received { background: var(--bg-tertiary); }
-html.light-mode .modal-content { background: var(--bg-secondary); }
-html.light-mode .topbar, html.light-mode .sidebar-content, html.light-mode .bottom-bar { backdrop-filter: none; }
+html.light-mode .gold-btn-outline {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+html.light-mode .gold-btn-outline:hover {
+    background: var(--gold);
+    color: #000;
+}
+
+html.light-mode .nav-btn.active {
+    background: rgba(212, 175, 55, 0.15);
+}
+
+html.light-mode table th {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+html.light-mode .stat-card {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+html.light-mode .chat-msg.received {
+    background: var(--bg-tertiary);
+}
+
+html.light-mode .modal-content {
+    background: var(--bg-secondary);
+}
+
+html.light-mode .topbar,
+html.light-mode .sidebar-content,
+html.light-mode .bottom-bar {
+    backdrop-filter: none;
+}
 
 /* ---------- إعادة الضبط ---------- */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -70,6 +99,8 @@ img { max-width: 100%; display: block; }
 button { cursor: pointer; font-family: var(--font); border: none; outline: none; }
 input, select, textarea { font-family: var(--font); outline: none; }
 .hidden { display: none !important; }
+.text-center { text-align: center; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
 
 /* ---------- شاشة التحميل ---------- */
 .loading-screen { position: fixed; inset: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s ease; }
@@ -310,4 +341,4 @@ tr:hover td { background: var(--bg-hover); }
 
 @media (min-width: 601px) and (max-width: 1024px) {
     .stats-grid { grid-template-columns: repeat(3, 1fr); }
-                                   }
+         }
