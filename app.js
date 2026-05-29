@@ -293,7 +293,7 @@ function updateUI() {
     if (isAdmin) roleText = '🎫 مدير';
     else if (isSuperMod) roleText = '🪄 مشرف مميز';
     else if (isMod) roleText = '🪄 مشرف';
-    else if (vipLevel > 0) roleText = ` VIP ✨'${vipLevel}`;
+    else if (vipLevel > 0) roleText = `✨ VIP ${vipLevel}`;
     $('#sidebar-role').textContent = roleText;
     
     const avatarContainer = $('#sidebar-avatar-container');
@@ -355,7 +355,7 @@ async function handleRegister(e) {
         // أول مستخدم = Admin
         const usersSnapshot = await getDocs(collection(db, 'users'));
         const isFirstUser = usersSnapshot.empty;
-        const serialId = isFirstUser ? '10' : generateSerialId();
+        const serialId = isFirstUser ? '11110' : generateSerialId();
 
         const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=D4AF37&color=111&size=200&bold=true&format=svg`;
 
