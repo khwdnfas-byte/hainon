@@ -299,4 +299,34 @@ tr:hover td { background: var(--bg-hover); }
 
 @media (min-width: 601px) and (max-width: 1024px) {
     .stats-grid { grid-template-columns: repeat(3, 1fr); }
-}
+}/* ---------- صفحة المصادقة ---------- */
+.auth-screen { position: fixed; inset: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 500; padding: 20px; }
+.auth-container { width: 100%; max-width: 420px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 24px; text-align: center; }
+.auth-logo { font-size: 32px; font-weight: 900; color: var(--gold); letter-spacing: 5px; margin-bottom: 4px; }
+.auth-subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 24px; }
+.auth-tabs { display: flex; gap: 0; margin-bottom: 24px; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.auth-tab { flex: 1; padding: 10px; background: transparent; color: var(--text-secondary); font-size: 14px; font-weight: 600; transition: var(--transition); }
+.auth-tab.active { background: var(--gold); color: #000; }
+.auth-form { display: none; flex-direction: column; gap: 14px; }
+.auth-form.active { display: flex; }
+.input-group { display: flex; flex-direction: column; gap: 5px; text-align: right; }
+.input-group label { font-size: 12px; color: var(--text-secondary); font-weight: 600; }
+.input-group input { padding: 11px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-tertiary); color: var(--text-primary); font-size: 14px; transition: var(--transition); }
+.input-group input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1); }
+.input-hint { font-size: 10px; color: var(--text-muted); }
+.auth-btn { padding: 13px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; transition: var(--transition); margin-top: 4px; }
+.gold-btn { background: var(--gold); color: #000; }
+.gold-btn:hover { background: var(--gold-light); box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3); }
+.text-btn { background: transparent; color: var(--text-muted); font-size: 13px; transition: var(--transition); cursor: pointer; padding: 6px; }
+.text-btn:hover { color: var(--text-primary); }
+
+/* ---------- صفحة تأكيد البريد و Onboarding ---------- */
+.verify-screen, .onboarding-screen { position: fixed; inset: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 600; padding: 20px; }
+.verify-container, .onboarding-container { text-align: center; padding: 32px; max-width: 400px; width: 100%; }
+.verify-container h2, .onboarding-container h2 { font-size: 20px; margin-bottom: 8px; }
+.verify-container p, .onboarding-container p { color: var(--text-muted); margin-bottom: 20px; font-size: 13px; }
+.verify-icon { font-size: 48px; margin-bottom: 16px; }
+.onboarding-avatar { width: 120px; height: 120px; border-radius: var(--radius-round); margin: 0 auto 20px; border: 3px solid var(--gold); overflow: hidden; background: var(--bg-tertiary); }
+.onboarding-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.gold-btn-outline { padding: 10px 28px; border-radius: var(--radius-sm); background: transparent; border: 2px solid var(--gold); color: var(--gold); font-size: 14px; font-weight: 600; transition: var(--transition); display: block; margin: 0 auto 10px; cursor: pointer; }
+.gold-btn-outline:hover { background: var(--gold); color: #000; }
