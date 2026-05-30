@@ -3824,4 +3824,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ---------- تصدير الدوال ----------
-export { navigateTo, showToast, showConfirm, formatCurrency, getTypeLabel };
+export { navigateTo, showToast, showConfirm, formatCurrency, getTypeLabel }; 
