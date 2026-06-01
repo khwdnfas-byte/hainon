@@ -272,16 +272,35 @@ tr:hover td { background: var(--bg-hover); }
 .toggle-switch.active::after { right: 23px; }
 
 /* ---------- أداة قص الصورة (Cropper) ---------- */
-.cropper-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.cropper-container { width: 90%; max-width: 500px; max-height: 70vh; }
-.cropper-container img { max-width: 100%; display: block; }
-.cropper-buttons { display: flex; gap: 12px; margin-top: 20px; }
+.cropper-modal { 
+    position: fixed; 
+    inset: 0; 
+    background: rgba(0,0,0,0.9); 
+    z-index: 2000; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+}
 
-/* ---------- شريط تمرير مخصص ---------- */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--bg-primary); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+.cropper-container { 
+    width: 90%; 
+    max-width: 500px; 
+    max-height: 70vh; 
+}
+
+.cropper-container img {
+    max-width: 100%;
+    display: block;
+    opacity: 1 !important; /* منع الشفافية */
+    background: #000; /* خلفية سوداء مؤقتة للصورة قبل الاقتصاص */
+}
+
+.cropper-buttons { 
+    display: flex; 
+    gap: 12px; 
+    margin-top: 20px; 
+}
 
 /* ---------- صفحة المصادقة ---------- */
 .auth-screen { position: fixed; inset: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 500; padding: 20px; }
