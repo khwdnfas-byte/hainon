@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>HAINON | نظام المحاسبة والإدارة المالية</title>
+
+    <!-- خطوط -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Cropper CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+
+    <!-- التنسيقات الأساسية -->
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+    <!-- ========== شاشة التحميل ========== -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loader">
+            <div class="loader-ring"></div>
+            <div class="loader-text">HAINON</div>
+        </div>
+    </div>
+
+    <!-- ========== شاشة المصادقة ========== -->
+    <div id="auth-screen" class="auth-screen hidden">
+        <div class="auth-container">
+            <div class="auth-logo">HAINON</div>
+            <div class="auth-subtitle">نظام المحاسبة والإدارة المالية</div>
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tab-login">تسجيل الدخول</button>
+                <button class="auth-tab" id="tab-register">حساب جديد</button>
+            </div>
+
+            <!-- نموذج تسجيل الدخول -->
+            <form class="auth-form active" id="login-form">
+                <div class="input-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="login-email" placeholder="example@mail.com" required>
+                </div>
+                <div class="input-group">
+                    <label>كلمة المرور</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="auth-btn gold-btn">دخول</button>
+                <button type="button" class="text-btn" id="forgot-password-btn">نسيت كلمة المرور؟</button>
+            </form>
+
+            <!-- نموذج التسجيل -->
+            <form class="auth-form" id="register-form">
+                <div class="input-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" id="register-name" placeholder="اسمك الكريم" required>
+                </div>
+                <div class="input-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="register-email" placeholder="example@mail.com" required>
+                </div>
+                <div class="input-group">
+                    <label>كلمة المرور</label>
+                    <input type="password" id="register-password" placeholder="حرف إنجليزي + أرقام (6 خانات)" required>
+                    <span class="input-hint">يجب أن تحتوي على حرف إنجليزي وأرقام (6 خانات على الأقل)</span>
+                </div>
+                <button type="submit" class="auth-btn gold-btn">إنشاء الحساب</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== شاشة تأكيد البريد ========== -->
+    <div id="verify-email-screen" class="verify-screen hidden">
+        <div class="verify-container">
+            <div class="verify-icon">📧</div>
+            <h2>تأكيد البريد الإلكتروني</h2>
+            <p>تم إرسال رمز تأكيد مكون من 6 أرقام إلى بريدك الإلكتروني</p>
+            <div class="input-group" style="margin-bottom:16px;">
+                <input type="text" id="verify-code-input" placeholder="أدخل الرمز" maxlength="6" inputmode="numeric">
+            </div>
+            <button id="verify-code-btn" class="gold-btn-outline">تأكيد</button>
+            <button id="resend-verify-btn" class="text-btn" style="margin-top:8px;">إعادة إرسال الرمز</button>
+        </div>
+    </div>
+
+    <!-- ========== شاشة الإعداد الأولي (Onboarding) ========== -->
+    <div id="onboarding-screen" class="onboarding-screen hidden">
+        <div class="onboarding-container">
+            <h2>مرحباً بك في HAINON</h2>
+            <p>لنكمل إعداد حسابك</p>
+            <div class="onboarding-avatar">
+                <img id="onboarding-avatar-img" src="https://ui-avatars.com/api/?name=مستخدم&background=D4AF37&color=111&size=200&bold=true&format=svg" alt="صورتك">
+            </div>
+            <button id="upload-avatar-btn" class="gold-btn-outline"><i class="fas fa-camera"></i> رفع صورة شخصية</button>
+            <button id="skip-onboarding" class="text-btn" style="margin-top:12px;">تخطي → الدخول مباشرة</button>
+        </div>
+    </div>
+
+    <!-- ========== التطبيق الرئيسي ========== -->
+    <div id="app" class="hidden">
+
+        <!-- الشريط العلوي -->
+        <header class="topbar">
+            <div class="topbar-right">
+                <button class="icon-btn" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+                <button class="icon-btn" id="theme-toggle-btn"><i class="fas fa-moon"></i></button>
+            </div>
+            <div class="topbar-center">
+                <div class="topbar-logo">HAINON</div>
+                <div class="topbar-subtitle" id="topbar-subtitle">النظام المالي</div>
+            </div>
+            <div class="topbar-left">
+                <button class="icon-btn notification-bell" id="notification-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge hidden" id="notification-badge">0</span>
+                </button>
+                <button class="avatar-btn" id="header-avatar">
+                    <img id="header-avatar-img" src="https://ui-avatars.com/api/?name=HAINON&background=D4AF37&color=111&size=80&bold=true&format=svg" alt="الصورة">
+                </button>
+                <span class="connection-status" id="connection-status"><i class="fas fa-circle"></i> متصل</span>
+            </div>
+        </header>
+
+        <!-- شريط VIP العلوي (اختياري، يظهر عند الحاجة) -->
+        <div class="vip-top-bar hidden" id="vip-top-bar">
+            <div class="vip-top-bar-content" id="vip-top-bar-content"></div>
+        </div>
+
+        <!-- القائمة الجانبية -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-overlay"></div>
+            <div class="sidebar-content">
+                <div class="sidebar-avatar" id="sidebar-avatar-container">
+                    <img id="sidebar-avatar-img" src="https://ui-avatars.com/api/?name=HAINON&background=D4AF37&color=111&size=200&bold=true&format=svg" alt="الصورة">
+                </div>
+                <div class="sidebar-username" id="sidebar-username">مستخدم</div>
+                <div class="sidebar-id" id="sidebar-id">ID: ----</div>
+                <div class="sidebar-bio" id="sidebar-bio"></div>
+                <div class="sidebar-role" id="sidebar-role"><i class="fas fa-user"></i> مستخدم</div>
+                <div class="gold-separator"></div>
+                <nav class="sidebar-nav" id="sidebar-nav">
+                    <!-- تُملأ ديناميكياً من app.js -->
+                </nav>
+                <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+            </div>
+        </aside>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="main-content">
+            <!-- الصفحات -->
+            <section class="page" id="page-dashboard"></section>
+            <section class="page" id="page-reports"></section>
+            <section class="page" id="page-debts"></section>
+            <section class="page" id="page-transactions"></section>
+            <section class="page" id="page-settings"></section>
+            <section class="page" id="page-privacy"></section>
+            <section class="page" id="page-vip-pricing"></section>
+            <section class="page" id="page-vip-payment"></section>
+            <section class="page" id="page-users"></section>
+            <section class="page" id="page-admin-chat"></section>
+            <section class="page" id="page-vip-support"></section>
+        </main>
+
+        <!-- الشريط السفلي (للجوال) -->
+        <div class="bottom-bar">
+            <button class="bottom-bar-btn hidden" id="bottom-btn-users"><i class="fas fa-users"></i> عرض المستخدمين</button>
+            <button class="bottom-bar-btn hidden" id="bottom-btn-back"><i class="fas fa-arrow-right"></i> عودة للرئيسية</button>
+        </div>
+
+        <!-- حاوية التنبيهات -->
+        <div class="toast-container" id="toast-container"></div>
+
+        <!-- قائمة الإشعارات المنسدلة -->
+        <div class="notifications-dropdown hidden" id="notifications-dropdown">
+            <div class="notifications-header">
+                <span>الإشعارات</span>
+                <button class="icon-btn-sm" id="notifications-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="notifications-list"></div>
+        </div>
+
+        <!-- الآلة الحاسبة -->
+        <button class="calc-toggle-btn hidden" id="calc-toggle"><i class="fas fa-calculator"></i></button>
+        <div class="calculator hidden" id="calculator">
+            <div class="calculator-header">
+                <span>🧮 الآلة الحاسبة</span>
+                <button class="icon-btn-sm" id="calc-close"><i class="fas fa-times"></i></button>
+            </div>
+            <input type="text" class="calc-display" id="calc-display" value="0" readonly>
+            <div class="calc-buttons">
+                <button class="calc-btn calc-clear" data-key="clear">C</button>
+                <button class="calc-btn calc-op" data-key="/">÷</button>
+                <button class="calc-btn calc-op" data-key="*">×</button>
+                <button class="calc-btn calc-op" data-key="-">-</button>
+                <button class="calc-btn" data-key="7">7</button>
+                <button class="calc-btn" data-key="8">8</button>
+                <button class="calc-btn" data-key="9">9</button>
+                <button class="calc-btn calc-op" data-key="+">+</button>
+                <button class="calc-btn" data-key="4">4</button>
+                <button class="calc-btn" data-key="5">5</button>
+                <button class="calc-btn" data-key="6">6</button>
+                <button class="calc-btn calc-equal" data-key="=">=</button>
+                <button class="calc-btn" data-key="1">1</button>
+                <button class="calc-btn" data-key="2">2</button>
+                <button class="calc-btn" data-key="3">3</button>
+                <button class="calc-btn" data-key="0">0</button>
+            </div>
+        </div>
+
+        <!-- ========== المودالات ========== -->
+        <!-- تأكيد عام -->
+        <div class="modal hidden" id="confirm-modal">
+            <div class="modal-content">
+                <h3>تأكيد</h3>
+                <p id="confirm-message"></p>
+                <div class="modal-buttons">
+                    <button class="btn-primary" id="confirm-yes">نعم</button>
+                    <button class="btn-outline" id="confirm-no">لا</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- نسيت كلمة المرور -->
+        <div class="modal hidden" id="forgot-password-modal">
+            <div class="modal-content">
+                <h3>نسيت كلمة المرور</h3>
+                <p>أدخل بريدك الإلكتروني لإرسال رمز التحقق</p>
+                <input type="email" id="forgot-email" placeholder="example@mail.com">
+                <div class="modal-buttons">
+                    <button class="btn-primary" id="forgot-send">إرسال</button>
+                    <button class="btn-outline" id="forgot-cancel">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- إعادة تعيين كلمة المرور -->
+        <div class="modal hidden" id="reset-password-modal" data-email="">
+            <div class="modal-content">
+                <h3>إعادة تعيين كلمة المرور</h3>
+                <p>أدخل الرمز المرسل وكلمة المرور الجديدة</p>
+                <input type="text" id="reset-code-input" placeholder="الرمز">
+                <input type="password" id="reset-new-password" placeholder="كلمة المرور الجديدة">
+                <input type="password" id="reset-confirm-password" placeholder="تأكيد كلمة المرور">
+                <div class="modal-buttons">
+                    <button class="btn-primary" id="reset-save">حفظ</button>
+                    <button class="btn-outline" id="reset-cancel">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- تعديل ID -->
+        <div class="modal hidden" id="edit-id-modal">
+            <div class="modal-content">
+                <h3>تعديل ID</h3>
+                <input type="hidden" id="edit-id-user-uid">
+                <input type="text" id="edit-id-input" placeholder="ID جديد">
+                <div class="modal-buttons">
+                    <button class="btn-primary" id="edit-id-save">حفظ</button>
+                    <button class="btn-outline" id="edit-id-cancel">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- حظر مستخدم -->
+        <div class="modal hidden" id="block-modal">
+            <div class="modal-content">
+                <h3>حظر مستخدم</h3>
+                <input type="hidden" id="block-user-uid">
+                <input type="text" id="block-reason" placeholder="سبب الحظر">
+                <select id="block-duration">
+                    <option value="1">يوم واحد</option>
+                    <option value="7">أسبوع</option>
+                    <option value="30">شهر</option>
+                    <option value="custom">مخصص</option>
+                    <option value="permanent">دائم</option>
+                </select>
+                <input type="date" id="block-custom-date" class="hidden">
+                <div class="modal-buttons">
+                    <button class="btn-danger" id="block-confirm">تأكيد الحظر</button>
+                    <button class="btn-outline" id="block-cancel">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========== السكربتات ========== -->
+    <!-- Cropper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <!-- نقطة الدخول الرئيسية -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
