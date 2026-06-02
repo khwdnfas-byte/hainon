@@ -270,7 +270,7 @@ export async function loadUsersPage() {
 }
 
 // ========== مودال الحظر الكامل ==========
-async function blockUserByAdmin() {
+export async function blockUserByAdmin() {
   const uid = $('#block-user-uid')?.value;
   const reason = $('#block-reason')?.value.trim();
   const duration = $('#block-duration')?.value;
