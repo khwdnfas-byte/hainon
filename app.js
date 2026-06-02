@@ -10,7 +10,7 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 import { ref, set, onValue, onDisconnect, serverTimestamp as rtdbTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 import {
   doc, getDoc, getDocs, collection, query, where, orderBy,
-  onSnapshot, serverTimestamp, updateDoc, addDoc, deleteDoc, setDoc
+  onSnapshot, serverTimestamp, updateDoc, addDoc, deleteDoc, setDoc, limit
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import {
   $, $$, showToast, showLoading, hideLoading, showConfirm, formatCurrency,
@@ -25,7 +25,8 @@ import {
 import {
   loadDashboardPage, loadTransactionsPage, loadDebtsPage,
   loadReportsPage, loadAccountLevelPage, sendMassNotification,
-  currentUser, userData, isAdmin, isSuperMod, isMod, isVip, vipLevel
+  currentUser, userData, isAdmin, isSuperMod, isMod, isVip, vipLevel,
+  loadUserData, archiveDailyTransactions
 } from './transactions.js';
 import {
   loadSiteManagementPage, loadAdminChat, loadVipSupportChat,
@@ -133,7 +134,6 @@ export function buildSidebar() {
   addBtn('privacy', 'fa-shield-alt', 'سياسة الخصوصية');
   addBtn('settings', 'fa-cog', 'الإعدادات');
 
-  // شريط الكتابة
   if (isVip || isAdmin || isMod || isSuperMod) {
     const writeBarBtn = document.createElement('button');
     writeBarBtn.className = 'nav-btn nav-btn-vip';
@@ -153,7 +153,6 @@ export function updateUI() {
   if (headerImg) headerImg.src = av;
   if (sidebarImg) sidebarImg.src = av;
 
-  // تحديث اسم الشركة في الشريط العلوي
   const topbarLogo = $('#topbar-logo');
   if (topbarLogo) topbarLogo.textContent = userData.company || 'HAINON';
 
@@ -171,18 +170,13 @@ export function updateUI() {
   }
   if (idEl) idEl.textContent = `ID: ${userData.serialId || '----'}`;
   if (bioEl) bioEl.textContent = userData.bio || '';
-  if (roleEl) {
-    roleEl.innerHTML = getVipBadgeText(userData.role) || '<i class="fas fa-user"></i> مستخدم';
-  }
-
+  if (roleEl) roleEl.innerHTML = getVipBadgeText(userData.role) || '<i class="fas fa-user"></i> مستخدم';
   if (avatarContainer) {
     avatarContainer.style.border = '3px solid var(--gold)';
     avatarContainer.style.boxShadow = getVipGlowStyle(userData.role);
   }
 
-  // تحديث زر الشريط
   updateWriteBarButton();
-
   buildSidebar();
 }
 
@@ -249,9 +243,8 @@ export async function checkVipNotifications() {
 // ========== الآلة الحاسبة العائمة ==========
 function setupCalculator() {
   const calc = $('#calculator');
-  const header = document.querySelector('.calculator-header');
   const toggleBtn = $('#calc-toggle');
-  if (!calc || !header || !toggleBtn) return;
+  if (!calc || !toggleBtn) return;
 
   let isDragging = false, offsetX = 0, offsetY = 0;
 
@@ -321,16 +314,8 @@ function handleCalcClick(key) {
 }
 
 // ========== القائمة الجانبية ==========
-function toggleSidebar() {
-  state.sidebarOpen = !state.sidebarOpen;
-  const sidebar = $('#sidebar');
-  if (sidebar) sidebar.classList.toggle('open', state.sidebarOpen);
-}
-function closeSidebar() {
-  state.sidebarOpen = false;
-  const sidebar = $('#sidebar');
-  if (sidebar) sidebar.classList.remove('open');
-}
+function toggleSidebar() { state.sidebarOpen = !state.sidebarOpen; const s = $('#sidebar'); if (s) s.classList.toggle('open', state.sidebarOpen); }
+function closeSidebar() { state.sidebarOpen = false; const s = $('#sidebar'); if (s) s.classList.remove('open'); }
 
 // ========== العودة للخلف ==========
 function goBack() {
@@ -338,33 +323,28 @@ function goBack() {
     const prevPage = state.historyStack.pop();
     navigateTo(prevPage);
   }
-}// ... تابع app.js
+}
 
 // ========== شريط الكتابة ==========
 function openWriteBar() {
-  const btn = $('#sidebar-write-bar-btn');
   const modal = $('#write-bar-modal');
   const title = $('#write-bar-title');
   const textarea = $('#write-bar-text');
   if (!modal) return;
 
-  // تحقق إذا كان لدى المستخدم شريط سابق
   if (userData?.currentBarId) {
     if (title) title.textContent = 'تعديل الشريط المكتوب';
     getDoc(doc(db, 'vipBars', userData.currentBarId)).then(snap => {
-      if (snap.exists() && textarea) {
-        textarea.value = snap.data().text || '';
-      }
+      if (snap.exists() && textarea) textarea.value = snap.data().text || '';
     });
   } else {
     if (title) title.textContent = 'اكتب شريط';
     if (textarea) textarea.value = '';
   }
 
-  // ألوان الشريط
   const colorsContainer = $('#write-bar-colors');
   if (colorsContainer) {
-    colorsContainer.innerHTML = WRITE_BAR_COLORS.map(c => 
+    colorsContainer.innerHTML = WRITE_BAR_COLORS.map(c =>
       `<span class="write-bar-color" style="background:${c};" data-color="${c}"></span>`
     ).join('');
     colorsContainer.querySelectorAll('.write-bar-color').forEach(el => {
@@ -373,7 +353,6 @@ function openWriteBar() {
         el.classList.add('active');
       });
     });
-    // تفعيل أول لون افتراضياً
     const firstColor = colorsContainer.querySelector('.write-bar-color');
     if (firstColor) firstColor.classList.add('active');
   }
@@ -389,7 +368,6 @@ function setupWriteBar() {
     if (!text) return showToast('اكتب شيئاً', 'error');
     if (text.length > 90) return showToast('الحد 90 حرفاً', 'error');
 
-    // التحقق من الحد الزمني 42 ساعة
     const lastTime = userData?.lastWriteBarTime?.toDate?.() || null;
     if (lastTime && !userData.currentBarId) {
       const hoursDiff = (Date.now() - lastTime.getTime()) / (1000 * 60 * 60);
@@ -401,21 +379,15 @@ function setupWriteBar() {
 
     try {
       if (userData?.currentBarId) {
-        // تعديل الشريط الموجود
         await updateDoc(doc(db, 'vipBars', userData.currentBarId), { text, color });
         showToast('تم تعديل الشريط', 'success');
       } else {
-        // كتابة شريط جديد
         const docRef = await addDoc(collection(db, 'vipBars'), {
-          uid: auth.currentUser.uid,
-          name: userData?.name,
-          avatar: userData?.avatar,
-          text, color,
-          createdAt: serverTimestamp()
+          uid: auth.currentUser.uid, name: userData?.name, avatar: userData?.avatar,
+          text, color, createdAt: serverTimestamp()
         });
         await updateDoc(doc(db, 'users', auth.currentUser.uid), {
-          currentBarId: docRef.id,
-          lastWriteBarTime: serverTimestamp()
+          currentBarId: docRef.id, lastWriteBarTime: serverTimestamp()
         });
         userData.currentBarId = docRef.id;
         userData.lastWriteBarTime = { toDate: () => new Date() };
@@ -447,8 +419,7 @@ function updateWriteBarButton() {
 // ========== الوضع الليلي ==========
 function toggleTheme() {
   const html = document.documentElement;
-  const isLight = html.classList.contains('light-mode');
-  if (isLight) {
+  if (html.classList.contains('light-mode')) {
     html.classList.remove('light-mode');
     localStorage.setItem('theme', 'dark');
   } else {
@@ -458,11 +429,10 @@ function toggleTheme() {
 }
 
 function applySavedTheme() {
-  const saved = localStorage.getItem('theme');
-  if (saved === 'light') document.documentElement.classList.add('light-mode');
+  if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light-mode');
 }
 
-// ========== صفحة سياسة الخصوصية ==========
+// ========== سياسة الخصوصية ==========
 async function loadPrivacyPage() {
   const section = $('#page-privacy');
   if (!section) return;
@@ -472,9 +442,7 @@ async function loadPrivacyPage() {
   const contentDiv = $('#privacy-content');
   if (contentDiv) {
     contentDiv.innerHTML = `
-      <div style="white-space:pre-wrap;line-height:1.8;background:var(--bg-card);padding:20px;border-radius:var(--radius-md);border:1px solid var(--border);">
-        ${escapeHtml(content)}
-      </div>
+      <div style="white-space:pre-wrap;line-height:1.8;background:var(--bg-card);padding:20px;border-radius:var(--radius-md);border:1px solid var(--border);">${escapeHtml(content)}</div>
       ${isAdmin ? '<button id="edit-privacy-btn" class="btn-outline btn-sm" style="margin-top:12px;"><i class="fas fa-edit"></i> تعديل</button>' : ''}
     `;
     $('#edit-privacy-btn')?.addEventListener('click', () => {
@@ -498,10 +466,7 @@ function updateVipTopBar() {
   onSnapshot(promoQuery, (promoSnap) => {
     onSnapshot(barsQuery, (barsSnap) => {
       allItems = [];
-      promoSnap.forEach(doc => {
-        const data = doc.data();
-        allItems.push({ type: 'promo', text: data.text, color: data.color || '#D4AF37' });
-      });
+      promoSnap.forEach(doc => allItems.push({ type: 'promo', text: doc.data().text, color: doc.data().color || '#D4AF37' }));
       barsSnap.forEach(doc => {
         const data = doc.data();
         allItems.push({ type: 'user', name: data.name, avatar: data.avatar, text: data.text, color: data.color || '#D4AF37' });
@@ -521,12 +486,7 @@ function startVipBarDisplay(items) {
   const content = $('#vip-top-bar-content');
   if (!bar || !content) return;
 
-  // التحقق من إعدادات المستخدم
-  if (userData?.showVipBar === false) {
-    bar.classList.add('hidden');
-    return;
-  }
-
+  if (userData?.showVipBar === false) { bar.classList.add('hidden'); return; }
   if (items.length === 0) { bar.classList.add('hidden'); return; }
   bar.classList.remove('hidden');
 
@@ -538,8 +498,7 @@ function startVipBarDisplay(items) {
     } else {
       content.innerHTML = `<div class="vip-top-bar-item">
         <img src="${item.avatar || 'https://ui-avatars.com/api/?name='+encodeURIComponent(item.name||'?')}" alt="${item.name}">
-        <span style="color:${item.color};">${item.name}: ${escapeHtml(item.text)}</span>
-      </div>`;
+        <span style="color:${item.color};">${item.name}: ${escapeHtml(item.text)}</span></div>`;
     }
     currentVipBarIndex++;
   };
@@ -567,12 +526,12 @@ function setupEventListeners() {
 
   $('#verify-code-btn')?.addEventListener('click', verifyEmailCode);
   $('#resend-verify-btn')?.addEventListener('click', resendVerificationCode);
-
   $('#reset-save')?.addEventListener('click', handleResetPassword);
   $('#reset-cancel')?.addEventListener('click', () => $('#reset-password-modal')?.classList.add('hidden'));
 
   $('#upload-avatar-btn')?.addEventListener('click', () => {
-    if (typeof openCropper === 'function') openCropper('avatar');
+    import('./dashboard.js').then(m => m.showVipConfetti('')).catch(() => {});
+    document.dispatchEvent(new CustomEvent('open-cropper', { detail: 'avatar' }));
   });
   $('#skip-onboarding')?.addEventListener('click', () => completeOnboarding(null));
 
@@ -581,7 +540,6 @@ function setupEventListeners() {
   document.querySelector('.sidebar-overlay')?.addEventListener('click', closeSidebar);
 
   $('#logout-btn')?.addEventListener('click', handleLogout);
-
   $('#notification-bell')?.addEventListener('click', () => $('#notifications-dropdown')?.classList.toggle('hidden'));
   $('#notifications-close')?.addEventListener('click', () => $('#notifications-dropdown')?.classList.add('hidden'));
 
@@ -589,10 +547,8 @@ function setupEventListeners() {
   $('#calc-close')?.addEventListener('click', toggleCalculator);
   $$('.calc-btn').forEach(btn => btn.addEventListener('click', () => handleCalcClick(btn.dataset.key)));
 
-  // شريط الكتابة
   setupWriteBar();
 
-  // إرسال إشعار جماعي
   $('#mass-notification-send')?.addEventListener('click', async () => {
     const text = $('#mass-notification-text')?.value.trim();
     if (!text) return showToast('اكتب نص الإشعار', 'error');
@@ -603,11 +559,9 @@ function setupEventListeners() {
   });
   $('#mass-notification-cancel')?.addEventListener('click', () => $('#mass-notification-modal')?.classList.add('hidden'));
 
-  // زر عرض المستخدمين VIP في الشريط السفلي
   $('#bottom-btn-vip-users')?.addEventListener('click', () => navigateTo('vip-users'));
   $('#bottom-btn-back')?.addEventListener('click', () => navigateTo('dashboard'));
 
-  // إغلاق Lightbox
   $('#lightbox-close')?.addEventListener('click', () => $('#image-lightbox')?.classList.add('hidden'));
   $('#image-lightbox')?.addEventListener('click', (e) => {
     if (e.target === $('#image-lightbox')) $('#image-lightbox').classList.add('hidden');
@@ -627,11 +581,7 @@ function setupEventListeners() {
     }
   });
 
-  // معالج أزرار الرجوع
-  window.addEventListener('popstate', (e) => {
-    e.preventDefault();
-    goBack();
-  });
+  window.addEventListener('popstate', (e) => { e.preventDefault(); goBack(); });
   history.pushState(null, '', window.location.href);
 
   setTimeout(setupCalculator, 1000);
@@ -641,12 +591,10 @@ function setupEventListeners() {
 onAuthStateChanged(auth, async (user) => {
   hideLoading();
   if (user) {
-    const { loadUserData, archiveDailyTransactions } = await import('./transactions.js');
     const exists = await loadUserData();
     if (exists) {
       const presenceRef = ref(rtdb, `presence/${user.uid}`);
-      const connectedRef = ref(rtdb, '.info/connected');
-      onValue(connectedRef, snap => {
+      onValue(ref(rtdb, '.info/connected'), snap => {
         if (snap.val() === true) {
           onDisconnect(presenceRef).set({ status: 'offline', lastSeen: rtdbTimestamp() });
           set(presenceRef, { status: 'online', lastSeen: rtdbTimestamp() });
@@ -659,10 +607,6 @@ onAuthStateChanged(auth, async (user) => {
 
       loadNotifications();
       updateVipTopBar();
-
-      // تحديث المتغيرات العامة في dashboard.js
-      const dashboardModule = await import('./dashboard.js');
-      const txModule = await import('./transactions.js');
 
       if (userData.blocked) {
         const reason = userData.blockReason || 'غير محدد';
@@ -701,13 +645,8 @@ onAuthStateChanged(auth, async (user) => {
 document.addEventListener('DOMContentLoaded', () => {
   const emailjsScript = document.createElement('script');
   emailjsScript.src = "https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js";
-  emailjsScript.onload = () => {
-    if (typeof emailjs !== 'undefined') emailjs.init("ILfMM-EFqQXbiBmeZ");
-  };
+  emailjsScript.onload = () => { if (typeof emailjs !== 'undefined') emailjs.init("ILfMM-EFqQXbiBmeZ"); };
   document.head.appendChild(emailjsScript);
-
   setupEventListeners();
   showLoading();
 });
-
-// ========== تصدير ==========
