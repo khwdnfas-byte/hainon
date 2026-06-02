@@ -24,7 +24,8 @@ import {
 } from './auth.js';
 import {
   loadDashboardPage, loadTransactionsPage, loadDebtsPage,
-  loadReportsPage, loadAccountLevelPage, sendMassNotification
+  loadReportsPage, loadAccountLevelPage, sendMassNotification,
+  currentUser, userData, isAdmin, isSuperMod, isMod, isVip, vipLevel
 } from './transactions.js';
 import {
   loadSiteManagementPage, loadAdminChat, loadVipSupportChat,
