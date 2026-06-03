@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAINON | غير متصل</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            background: #0a0a0a;
+            color: #F5F5F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .offline-container {
+            max-width: 500px;
+            padding: 40px;
+            background: #111;
+            border: 1px solid #D4AF37;
+            border-radius: 16px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.15);
+        }
+        .offline-icon {
+            font-size: 80px;
+            color: #D4AF37;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #D4AF37;
+            font-size: 28px;
+            margin: 0 0 10px;
+            letter-spacing: 2px;
+        }
+        p {
+            color: #AAAAAA;
+            font-size: 16px;
+            line-height: 1.8;
+            margin: 0 0 20px;
+        }
+        .tech-badge {
+            display: inline-block;
+            background: #1a1a1a;
+            border: 1px solid #2A2A2A;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: #777;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .btn-retry {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #D4AF37;
+            color: #000;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 25px;
+            transition: 0.3s;
+        }
+        .btn-retry:hover {
+            background: #E8C84A;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">📡</div>
+        <h1>HAINON</h1>
+        <p>
+            يبدو أن اتصالك بالإنترنت قد انقطع مؤقتًا.<br>
+            <strong>HAINON</strong> هو نظام محاسبي سحابي متطور يعتمد على بنية تحتية عالية التقنية لضمان تزامن بياناتك وحمايتها في الزمن الحقيقي.
+        </p>
+        <p style="font-size:14px; color:#777;">
+            يعمل التطبيق بتقنيات Firebase Firestore للتخزين السحابي، Realtime Database للمزامنة الفورية، وEmailJS للتوثيق الآمن.
+        </p>
+        <div class="tech-badge">Firebase • EmailJS • Vanilla JS • PWA Ready</div>
+        <br>
+        <a href="javascript:location.reload()" class="btn-retry">🔄 إعادة المحاولة</a>
+        <p style="font-size:12px; color:#555; margin-top: 20px;">
+            فريق HAINON يتمنى لك تجربة سلسة. يُرجى التحقق من اتصالك والمحاولة مرة أخرى.
+        </p>
+    </div>
+</body>
+</html>
